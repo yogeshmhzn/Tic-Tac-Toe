@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tic Tac Toe</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link rel="stylesheet" href="game.css" />
+  </head>
+  <body>
+    <div class="flex-box">
+      <div class="container">
+        <div class="board-row">
+          <div class="cell" onclick="makeMove(0, 0)"></div>
+          <div class="cell" onclick="makeMove(0, 1)"></div>
+          <div class="cell" onclick="makeMove(0, 2)"></div>
+        </div>
+        <div class="board-row">
+          <div class="cell" onclick="makeMove(1, 0)"></div>
+          <div class="cell" onclick="makeMove(1, 1)"></div>
+          <div class="cell" onclick="makeMove(1, 2)"></div>
+        </div>
+        <div class="board-row">
+          <div class="cell" onclick="makeMove(2, 0)"></div>
+          <div class="cell" onclick="makeMove(2, 1)"></div>
+          <div class="cell" onclick="makeMove(2, 2)"></div>
+        </div>
+
+        <div class="text-center mt-3">
+          <button class="btn btn-primary" onclick="resetGame()">
+            Restart Game
+          </button>
+        </div>
+      </div>
+      <div class="rightpart">
+        <h1 class="text-center mt-3">
+          <span id="winner" class="winner"></span> turn
+        </h1>
+        <div class="scoreboard mt-3">
+          <h2><u>Scoreboard</u></h2>
+          <p>Player X: <span id="scoreX">0</span> wins</p>
+          <p>Player O: <span id="scoreO">0</span> wins</p>
+        </div>
+      </div>
+    </div>
+    <a href="Home.html" img src="close.png">X</a>
+    <script>
+      const cells = document.querySelectorAll(".cell");
+      const winnerDisplay = document.getElementById("winner");
+      const scoreXDisplay = document.getElementById("scoreX");
+      const scoreODisplay = document.getElementById("scoreO");
+
+      let currentPlayer = "X";
+      let gameOver = false;
+      let scoreX = 0;
+      let scoreO = 0;
+      let winningCells = [];
+
+      const WINNING_COMBINATIONS = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+
+      function makeMove(row, col) {
+        if (gameOver || cells[row * 3 + col].textContent !== "") {
+          return;
+        }
+
+        cells[row * 3 + col].textContent = currentPlayer;
+
+        if (checkWin(row, col)) {
+          winnerDisplay.textContent = currentPlayer + " wins!";
+          winnerDisplay.classList.add("winner");
+          updateScore();
+          highlightWinningCells();
+          gameOver = true;
+        } else if (checkDraw()) {
+          winnerDisplay.textContent = "It's a draw!";
+          winnerDisplay.classList.remove("winner");
+          gameOver = true;
+        } else {
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+          winnerDisplay.textContent = " Player " + currentPlayer;
+        }
+      }
+
+      function checkWin(row, col) {
+        const symbol = currentPlayer;
+
+        for (const combination of WINNING_COMBINATIONS) {
+          if (
+            combination.includes(row * 3 + col) &&
+            combination.every((index) => cells[index].textContent === symbol)
+          ) {
+            winningCells = combination;
+            return true;
+          }
+        }
+        return false;
+      }
+
+      function checkDraw() {
+        for (const cell of cells) {
+          if (cell.textContent === "") {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function updateScore() {
+        if (currentPlayer === "X") {
+          scoreX++;
+          scoreXDisplay.textContent = scoreX;
+        } else {
+          scoreO++;
+          scoreODisplay.textContent = scoreO;
+        }
+      }
+
+      function highlightWinningCells() {
+        for (const index of winningCells) {
+          cells[index].classList.add("winning");
+        }
+      }
+
+      function resetGame() {
+        for (const cell of cells) {
+          cell.textContent = "";
+          cell.classList.remove("winning");
+        }
+        winnerDisplay.textContent = "";
+        winnerDisplay.classList.remove("winner");
+        gameOver = false;
+        currentPlayer = "X";
+        winningCells = [];
+      }
+    </script>
+  </body>
+</html>
